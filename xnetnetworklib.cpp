@@ -40,7 +40,7 @@ QImage Xnetnetworklib::getNetworkImage(QString imgUrl)
     return img;
 }
 
-void Xnetnetworklib::getNetworkFile(QByteArray &dataArray, QUrl url)
+int Xnetnetworklib::getNetworkFile(QByteArray &dataArray, QUrl url)
 {
     QNetworkAccessManager* netAccManager = new QNetworkAccessManager;
     QNetworkRequest request(url);
@@ -53,7 +53,7 @@ void Xnetnetworklib::getNetworkFile(QByteArray &dataArray, QUrl url)
 
 }
 
-void Xnetnetworklib::getNetworkFile(QByteArray &dataArray, QString url)
+int Xnetnetworklib::getNetworkFile(QByteArray &dataArray, QString url)
 {
     QUrl dataUrl = url;
     QNetworkAccessManager* netAccManager = new QNetworkAccessManager;
@@ -67,7 +67,7 @@ void Xnetnetworklib::getNetworkFile(QByteArray &dataArray, QString url)
 
 }
 
-void Xnetnetworklib::obsoleteDownloadfile(QFile &path, QUrl url)
+int Xnetnetworklib::obsoleteDownloadfile(QFile &path, QUrl url)
 {
     if ( path.open(QIODevice::ReadWrite) )
     {
@@ -82,10 +82,13 @@ void Xnetnetworklib::obsoleteDownloadfile(QFile &path, QUrl url)
         path.write(reply->readAll());
         path.flush();
 
+    }if (!path.open(QIODevice::ReadWrite))
+    {
+        return -1;
     }
 }
 
-void Xnetnetworklib::obsoleteDownloadfile(QFile &path, QString url)
+int Xnetnetworklib::obsoleteDownloadfile(QFile &path, QString url)
 {
 
     if ( path.open(QIODevice::ReadWrite) )
@@ -102,15 +105,21 @@ void Xnetnetworklib::obsoleteDownloadfile(QFile &path, QString url)
         loop.exec();
         path.write(reply->readAll());
         path.flush();
+    }if (!path.open(QIODevice::ReadWrite))
+    {
+        return -1;
     }
 }
 
-void Xnetnetworklib::dowloadfile(QFile &path, QUrl url)
+int Xnetnetworklib::dowloadfile(QFile &path, QUrl url)
 {
     QNetworkAccessManager nam;
 
     if(!path.open(QIODevice::ReadWrite))
-        ;
+    {
+        return -1;
+    }
+
     QNetworkRequest request(url);
     QNetworkReply* reply = nam.get(request);
     QEventLoop loop;
@@ -134,17 +143,20 @@ void Xnetnetworklib::dowloadfile(QFile &path, QUrl url)
 
 }
 
-void Xnetnetworklib::dowloadfile(QFile &path, QString url)
+int Xnetnetworklib::dowloadfile(QFile &path, QString url)
 {
     QNetworkAccessManager nam;
     QUrl dataurl = url;
     if(!path.open(QIODevice::ReadWrite))
-        ;
+{
+        return -1;
+    }
     QNetworkRequest request(dataurl);
     QNetworkReply* reply = nam.get(request);
     reply->ignoreSslErrors();
     QEventLoop loop;
-    QObject::connect(reply, &QNetworkReply::readyRead, [&]{
+    QObject::connect(reply, &QNetworkReply::readyRead, [&]
+    {
         //this will be called every time a chunk of data is received
         QByteArray data= reply->readAll();
         //qDebug() << "received data of size: " << data.size();
@@ -153,7 +165,8 @@ void Xnetnetworklib::dowloadfile(QFile &path, QString url)
 
     //use the finished signal from the reply object to close the file
     //and delete the reply object
-    QObject::connect(reply, &QNetworkReply::finished, [&]{
+    QObject::connect(reply, &QNetworkReply::finished, [&]
+    {
         qDebug() << "finished downloading";
         QByteArray data= reply->readAll();
         path.write(data);
