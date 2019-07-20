@@ -93,7 +93,7 @@ void Xnetnetworklib::obsoleteDownloadfile(QFile &path, QString url)
         QUrl dataUrl = url;
         QNetworkAccessManager* netAccManager = new QNetworkAccessManager;
         QNetworkRequest request(dataUrl);
-                dataUrl = NULL;
+        dataUrl = NULL;
         QNetworkReply *reply = netAccManager->get(request);
         reply->ignoreSslErrors();
         QEventLoop loop;
@@ -141,8 +141,8 @@ void Xnetnetworklib::dowloadfile(QFile &path, QString url)
     if(!path.open(QIODevice::ReadWrite))
         ;
     QNetworkRequest request(dataurl);
-        QNetworkReply* reply = nam.get(request);
-        reply->ignoreSslErrors();
+    QNetworkReply* reply = nam.get(request);
+    reply->ignoreSslErrors();
     QEventLoop loop;
     QObject::connect(reply, &QNetworkReply::readyRead, [&]{
         //this will be called every time a chunk of data is received
@@ -159,7 +159,7 @@ void Xnetnetworklib::dowloadfile(QFile &path, QString url)
         path.write(data);
         path.flush();
         reply->deleteLater();
-loop.exit();
+        loop.exit();
     });
     loop.exec();
 
