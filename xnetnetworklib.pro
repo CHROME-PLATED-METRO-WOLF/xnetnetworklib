@@ -10,7 +10,10 @@ QT       += gui
 
 TARGET = xnetnetworklib
 TEMPLATE = lib
-
+QMAKE_CXXFLAGS += -Ofast
+QMAKE_CXXFLAGS_RELEASE -= -O2
+QMAKE_LFLAGS_RELEASE -= -O1
+QMAKE_LFLAGS_RELEASE += -Ofast
 DEFINES += XNETNETWORKLIB_LIBRARY
 
 # The following define makes your compiler emit warnings if you use
